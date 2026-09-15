@@ -1,0 +1,7 @@
+# Windows-rommel
+Thumbs.db
+desktop.ini
+
+# tijdelijke bouwsels
+*.tmp
+*.bak

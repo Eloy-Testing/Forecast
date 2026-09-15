@@ -1,0 +1,8 @@
+[
+  {"id":15,"naam":"Co-sleeper","besteld":"2026-08-25","eta":"2026-09-08","regels":1,"stuks":200,"detail":false},
+  {"id":18,"naam":"SmartWatch + accessoires","besteld":"2026-08-30","eta":"2026-09-11","regels":5,"stuks":250,"detail":false},
+  {"id":10,"naam":"Mid September 2026","besteld":"2026-06-25","eta":"2026-09-17","regels":113,"stuks":3836,"detail":true},
+  {"id":11,"naam":"Begin October","besteld":"2026-08-04","eta":"2026-10-09","regels":60,"stuks":4476,"detail":true},
+  {"id":19,"naam":"Draagbare flessenwarmer","besteld":"2026-08-30","eta":"2026-10-13","regels":1,"stuks":306,"detail":false},
+  {"id":14,"naam":"Delivery November","besteld":"2026-08-19","eta":"2026-11-06","regels":107,"stuks":7164,"detail":true}
+]

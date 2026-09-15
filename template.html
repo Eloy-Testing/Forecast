@@ -1,0 +1,1026 @@
+<title>Voorraadhorizon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#eef0f3; --surface:#ffffff; --surface-2:#f6f7f9; --surface-3:#eceff3;
+  --line:#d9dee4; --line-soft:#e7eaee;
+  --ink:#0f1720; --ink-2:#44515f; --ink-3:#6e7c8b;
+  --accent:#1d4f7c; --accent-soft:#dbe6f0;
+  --crit:#a8331f; --crit-bar:#c9503a; --crit-soft:#f7ded8;
+  --warn:#8a6210; --warn-bar:#d9a53f; --warn-soft:#f8eed8;
+  --ok:#2a6f57; --ok-bar:#5fa98a; --ok-soft:#dcebe4;
+  --rail:#c6ced7;
+  --shadow:0 1px 2px rgba(15,23,32,.06),0 4px 14px rgba(15,23,32,.05);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --ground:#0c1015; --surface:#141b23; --surface-2:#1a232c; --surface-3:#202b36;
+  --line:#28323d; --line-soft:#212a34;
+  --ink:#e7ecf2; --ink-2:#a4b2c0; --ink-3:#78889a;
+  --accent:#71abdf; --accent-soft:#1b2e41;
+  --crit:#e79076; --crit-bar:#c05a3f; --crit-soft:#3b201a;
+  --warn:#dcae57; --warn-bar:#b08526; --warn-soft:#352a15;
+  --ok:#73c3a4; --ok-bar:#3f8468; --ok-soft:#16302a;
+  --rail:#3a4756;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 4px 16px rgba(0,0,0,.28);
+}}
+:root[data-theme="dark"]{
+  --ground:#0c1015; --surface:#141b23; --surface-2:#1a232c; --surface-3:#202b36;
+  --line:#28323d; --line-soft:#212a34;
+  --ink:#e7ecf2; --ink-2:#a4b2c0; --ink-3:#78889a;
+  --accent:#71abdf; --accent-soft:#1b2e41;
+  --crit:#e79076; --crit-bar:#c05a3f; --crit-soft:#3b201a;
+  --warn:#dcae57; --warn-bar:#b08526; --warn-soft:#352a15;
+  --ok:#73c3a4; --ok-bar:#3f8468; --ok-soft:#16302a;
+  --rail:#3a4756;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 4px 16px rgba(0,0,0,.28);
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif;font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:26px 64px;
+  display:flex;flex-direction:column;gap:24px}
+h1,h2,h3{font-family:Archivo,system-ui,sans-serif;margin:0;text-wrap:balance}
+h1{font-size:25px;font-weight:800;letter-spacing:-.02em}
+h2{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+h3{font-size:15px;font-weight:700}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.muted{color:var(--ink-3)}
+a{color:var(--accent)}
+
+header{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;
+  border-bottom:2px solid var(--ink);padding-bottom:13px}
+header .sub{color:var(--ink-2);font-size:13px;margin-top:3px}
+.stamp{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink-3);text-align:right;line-height:1.75}
+.stamp b{color:var(--ink-2);font-weight:500}
+
+/* ---------- laag 1: de beslissing ---------- */
+.verdict{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--crit);
+  border-radius:4px;padding:20px 22px;box-shadow:var(--shadow);
+  display:grid;grid-template-columns:minmax(260px,1.25fr) repeat(auto-fit,minmax(130px,1fr));gap:22px;align-items:start}
+.verdict .lede{font-family:Archivo,sans-serif;font-size:19px;font-weight:700;line-height:1.35;letter-spacing:-.01em}
+.verdict .lede em{font-style:normal;color:var(--crit)}
+.verdict .note{font-size:12.5px;color:var(--ink-2);margin-top:8px;line-height:1.55}
+.vnum{display:flex;flex-direction:column;gap:3px}
+.vnum .k{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.vnum .v{font-family:"IBM Plex Mono",monospace;font-size:28px;font-weight:600;letter-spacing:-.025em;line-height:1.05}
+.vnum .n{font-size:11.5px;color:var(--ink-3)}
+.vnum.crit .v{color:var(--crit)}
+
+/* ---------- parameters ---------- */
+.params{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:15px 18px;
+  display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;box-shadow:var(--shadow)}
+.param{display:flex;flex-direction:column;gap:6px;min-width:180px;flex:1 1 180px}
+.param label{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.param .val{font-family:"IBM Plex Mono",monospace;font-size:14.5px;font-weight:600;color:var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.seg{display:flex;border:1px solid var(--line);border-radius:3px;overflow:hidden;width:fit-content}
+.seg button{appearance:none;border:0;background:var(--surface-2);color:var(--ink-2);font:inherit;font-size:12.5px;
+  padding:6px 12px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+:root[data-theme="dark"] .seg button[aria-pressed=true]{color:#0c1015}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .seg button[aria-pressed=true]{color:#0c1015}}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+/* ---------- kpi ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.kpi{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.kpi .k{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.kpi .v{font-family:"IBM Plex Mono",monospace;font-size:25px;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.kpi .n{font-size:11.5px;color:var(--ink-2)}
+.kpi.is-crit .v{color:var(--crit)} .kpi.is-warn .v{color:var(--warn)} .kpi.is-ok .v{color:var(--ok)}
+
+/* ---------- panel ---------- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;box-shadow:var(--shadow)}
+.panel-head{padding:13px 18px;border-bottom:1px solid var(--line-soft);display:flex;flex-wrap:wrap;gap:10px;
+  align-items:baseline;justify-content:space-between}
+.panel-head .hint{font-size:12px;color:var(--ink-3)}
+.panel-body{padding:16px 18px}
+
+/* ---------- weekbalk ---------- */
+.weeks{display:flex;gap:2px;align-items:flex-end;height:120px;margin-top:26px;position:relative}
+.wk{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;height:100%;
+  cursor:pointer;position:relative;min-width:0}
+.wk .bar{background:var(--crit-bar);border-radius:1px 1px 0 0;transition:opacity .12s}
+.wk:hover .bar{opacity:.72}
+.wk[data-sel=true] .bar{outline:2px solid var(--ink);outline-offset:1px}
+.wk .cap{position:absolute;top:-20px;left:0;right:0;text-align:center;font-family:"IBM Plex Mono",monospace;
+  font-size:10px;color:var(--ink-3)}
+.wk-axis{display:flex;gap:2px;margin-top:6px}
+.wk-axis div{flex:1;text-align:center;font-size:10px;color:var(--ink-3);min-width:0;overflow:hidden}
+.arrivals{display:flex;gap:2px;margin-top:5px;height:18px}
+.arrivals div{flex:1;display:flex;justify-content:center;align-items:center;min-width:0}
+.arrivals .pin{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;
+  border-bottom:8px solid var(--accent)}
+
+/* ---------- horizonstrip ---------- */
+.strip{--labw:270px}
+.strip-scale{border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:8px;position:relative;height:18px}
+.strip-scale span{position:absolute;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink-3);
+  transform:translateX(-50%);white-space:nowrap}
+.srow{display:flex;align-items:center;height:28px;border-bottom:1px solid var(--line-soft);cursor:pointer}
+.srow:hover{background:var(--surface-2)}
+.srow[data-sel=true]{background:var(--accent-soft)}
+.slab{width:var(--labw);flex:0 0 var(--labw);padding-right:10px;font-size:12.5px;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+.swk{flex:0 0 66px;padding-right:14px;text-align:right;font-family:"IBM Plex Mono",monospace;font-size:11px;
+  color:var(--ink-2);font-variant-numeric:tabular-nums}
+.swk .muted{font-size:9.5px}
+.strack{flex:1;position:relative;height:14px;background:var(--ok-soft);border-radius:2px;min-width:0;
+  box-shadow:inset 0 0 0 1px var(--line-soft)}
+.strack .gap{position:absolute;top:0;bottom:0;background:var(--crit-bar);border-radius:1px}
+.sarr{position:absolute;top:-5px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;
+  border-top:6px solid var(--accent);transform:translateX(-4px);z-index:2}
+.sdate{flex:0 0 118px;text-align:right;padding-left:12px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;
+  color:var(--crit)}
+.sdate b{font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--ink-2);margin-top:12px}
+.legend i{display:inline-block;width:12px;height:9px;border-radius:2px;margin-right:6px;vertical-align:baseline}
+
+/* ---------- tabel ---------- */
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+th{position:sticky;top:0;background:var(--surface-2);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;cursor:pointer;z-index:1;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:230px}
+th.sorted{color:var(--accent)}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr[data-sel=true]{background:var(--accent-soft)}
+td.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:1px 7px;border-radius:9px;font-size:11px;font-weight:600;
+  font-family:"IBM Plex Mono",monospace}
+.pill.crit{background:var(--crit-soft);color:var(--crit)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.flat{background:var(--surface-3);color:var(--ink-3)}
+input[type=search]{font:inherit;font-size:13px;padding:6px 10px;border:1px solid var(--line);border-radius:3px;
+  background:var(--surface-2);color:var(--ink);min-width:200px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font:inherit;
+  font-size:12px;padding:4px 11px;border-radius:14px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+
+/* ---------- detail ---------- */
+.detail{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(230px,1fr);gap:22px}
+@media(max-width:820px){.detail{grid-template-columns:1fr}}
+.dchart{width:100%;height:auto;display:block}
+.dfacts{display:flex;flex-direction:column;gap:0;font-size:13px}
+.dfacts div{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line-soft)}
+.dfacts span:last-child{font-family:"IBM Plex Mono",monospace;font-weight:600}
+.empty{padding:40px 18px;text-align:center;color:var(--ink-3);font-size:13px}
+
+/* ---------- bestelbon ---------- */
+#orderpanel{border-color:var(--accent);border-width:1px;box-shadow:0 1px 2px rgba(15,23,32,.07),0 8px 22px rgba(29,79,124,.10)}
+#orderpanel .panel-head{background:var(--accent-soft);border-bottom:1px solid var(--line)}
+#orderpanel .panel-head h2{color:var(--accent)}
+.osum{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--line)}
+.osum>div{padding:14px 20px;border-right:1px solid var(--line-soft);display:flex;align-items:baseline;gap:8px;
+  flex-wrap:wrap}
+.osum>div:last-child{border-right:0}
+.osum .k{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);font-weight:600;
+  flex-basis:100%}
+.osum .v{font-family:"IBM Plex Mono",monospace;font-size:30px;font-weight:600;letter-spacing:-.03em;
+  line-height:1;color:var(--accent)}
+.osum .v2{font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:600;line-height:1.5}
+.osum .n{font-size:12.5px;color:var(--ink-2)}
+table.otbl{font-size:13.5px}
+table.otbl th{text-align:right}
+table.otbl th:first-child{text-align:left}
+table.otbl td{padding:7px 12px}
+table.otbl td.oname{text-align:left;white-space:normal;min-width:260px}
+table.otbl td.odoos{width:78px}
+table.otbl td.odoos b{font-family:"IBM Plex Mono",monospace;font-size:17px;font-weight:600}
+table.otbl td.owhy{width:110px}
+table.otbl tr.ogroep td{background:var(--surface-3);font-weight:700;font-size:12px;letter-spacing:.05em;
+  text-transform:uppercase;border-top:1px solid var(--line);padding-top:9px;padding-bottom:9px}
+table.otbl tr.ogroep td:first-child{color:var(--ink)}
+table.otbl tfoot td{background:var(--surface-2);font-weight:700;border-top:2px solid var(--ink);
+  border-bottom:0;font-size:15px;padding-block:11px}
+table.otbl tbody tr:hover{background:var(--surface-2)}
+.onietblok{padding:14px 20px;border-top:1px solid var(--line);background:var(--warn-soft);font-size:12.5px;
+  line-height:1.6;color:var(--ink-2)}
+.onietblok b{color:var(--warn)}
+.onietlijst{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px}
+.onietlijst span{font-size:12px;color:var(--ink-2)}
+.onietlijst b{color:var(--ink);font-weight:600}
+#ocopy{padding:6px 13px}
+#ocopy[data-ok=true]{background:var(--ok);color:#fff;border-color:var(--ok)}
+
+/* ---------- containers ---------- */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:1px;background:var(--line)}
+.ccard{background:var(--surface);padding:16px 17px;display:flex;flex-direction:column;gap:9px}
+.ccard .cname{font-family:Archivo,sans-serif;font-weight:700;font-size:15px}
+.ccard .ceta{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent)}
+.cbig{font-family:"IBM Plex Mono",monospace;font-size:26px;font-weight:600;line-height:1.05;color:var(--ok)}
+.crow{display:flex;justify-content:space-between;font-size:12.5px;gap:10px;color:var(--ink-2)}
+.crow b{font-family:"IBM Plex Mono",monospace;font-weight:600;color:var(--ink)}
+
+/* ---------- spec ---------- */
+.spec{font-size:13.5px;line-height:1.65}
+.spec h3{margin:20px 0 8px}
+.spec h3:first-child{margin-top:0}
+.spec ul{margin:6px 0;padding-left:20px}
+.spec li{margin:4px 0}
+.spec code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--surface-3);
+  padding:1px 5px;border-radius:3px}
+.spec pre{background:var(--surface-3);border:1px solid var(--line-soft);border-radius:3px;padding:12px 14px;
+  overflow-x:auto;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;margin:8px 0}
+.spec table{font-size:12.5px;margin:8px 0}
+.spec th,.spec td{text-align:left;white-space:normal}
+.spec th:first-child,.spec td:first-child{min-width:0}
+.open{border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 3px 3px 0;margin:10px 0}
+.open b{color:var(--warn)}
+footer{font-size:12px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:14px;line-height:1.7}
+
+/* ---------- smal scherm ---------- */
+@media(max-width:720px){
+  .wrap{padding-inline:14px}
+  h1{font-size:21px}
+  .strip{--labw:118px}
+  .swk{display:none}
+  .slab{font-size:11.5px;padding-right:8px}
+  .sdate{flex:0 0 72px;padding-left:8px;font-size:10.5px}
+  .strip-scale span:nth-child(even){display:none}
+  .weeks{height:90px}
+  .wk .cap{display:none}
+  .verdict{padding:16px}
+  .verdict .lede{font-size:17px}
+  .vnum .v{font-size:23px}
+  .panel-head{padding:12px 14px}
+  .panel-body{padding:14px}
+  .seg button{padding:5px 9px;font-size:11.5px}
+}
+</style>
+
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>Voorraadhorizon</h1>
+    <div class="sub">Wanneer loopt wat leeg, wanneer komt het terug, en hoeveel moet er nu de boot op.</div>
+  </div>
+  <div class="stamp" id="stamp"></div>
+</header>
+
+<!-- 1. DE BESLISSING -->
+<section class="verdict" id="verdict"></section>
+
+<!-- 2. AANNAMES -->
+<section class="params">
+  <div class="param">
+    <label for="lead">Levertijd (besteld → in magazijn)</label>
+    <input type="range" id="lead" min="30" max="150" step="5">
+    <div class="val" id="leadv"></div>
+  </div>
+  <div class="param">
+    <label for="dek">Dekking die je wilt hebben</label>
+    <input type="range" id="dek" min="30" max="180" step="5">
+    <div class="val" id="dekv"></div>
+  </div>
+  <div class="param" style="flex:0 0 auto;min-width:0">
+    <label>Verkooptempo gebaseerd op</label>
+    <div class="seg" id="win">
+      <button data-w="7">7 dagen</button><button data-w="28">28 dagen</button><button data-w="90">90 dagen</button>
+    </div>
+  </div>
+  <div class="param" style="flex:0 0 auto;min-width:0">
+    <label>Weergave</label>
+    <div class="seg" id="theme">
+      <button data-t="auto">auto</button><button data-t="light">licht</button><button data-t="dark">donker</button>
+    </div>
+  </div>
+</section>
+
+<!-- 3. DE BESTELLING -->
+<section class="panel" id="orderpanel">
+  <div class="panel-head" style="gap:12px">
+    <h2>De bestelling &mdash; dit moet er nu op de boot</h2>
+    <div class="seg" id="osort" style="margin-left:auto">
+      <button data-s="fam">per productlijn</button><button data-s="dozen">grootste eerst</button><button data-s="urgent">meest urgent</button>
+    </div>
+    <button class="chip" id="ocopy" type="button">kopieer naar Excel</button>
+  </div>
+  <div id="ordersheet"></div>
+  <div id="oniet"></div>
+</section>
+
+<!-- 4. KPI -->
+<section class="kpis" id="kpis"></section>
+
+<!-- 4. DE HORIZON -->
+<section class="panel">
+  <div class="panel-head">
+    <h2>Hoeveel SKU&#39;s staan er droog, week voor week</h2>
+    <div class="hint">▲ = container arriveert &middot; klik een week om de tabel te filteren</div>
+  </div>
+  <div class="panel-body">
+    <div class="weeks" id="weeks"></div>
+    <div class="arrivals" id="wkarr"></div>
+    <div class="wk-axis" id="wkaxis"></div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-head" style="gap:14px">
+    <h2>Horizon per SKU</h2>
+    <div class="seg" id="smode" style="margin-left:auto">
+      <button data-m="schade">meeste schade</button><button data-m="eerst">eerst leeg</button>
+      <button data-m="tweede">loopt 2× leeg</button><button data-m="gedekt">gedekt</button>
+    </div>
+    <div class="hint" id="striphint" style="flex-basis:100%"></div>
+  </div>
+  <div class="panel-body strip">
+    <div class="strip-scale" id="scale"></div>
+    <div id="rows"></div>
+    <div class="legend">
+      <span><i style="background:var(--ok-soft);border:1px solid var(--line)"></i>op voorraad</span>
+      <span><i style="background:var(--crit-bar)"></i>uit voorraad — klanten wachten</span>
+      <span><i style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--accent);border-radius:0"></i>container binnen</span>
+    </div>
+  </div>
+</section>
+
+<!-- 5. DETAIL -->
+<section class="panel">
+  <div class="panel-head">
+    <h2 id="dtitle">Detail</h2>
+    <div class="hint">klik een SKU hierboven of in de tabel</div>
+  </div>
+  <div class="panel-body" id="detail"></div>
+</section>
+
+<!-- 6. ACTIETABEL -->
+<section class="panel">
+  <div class="panel-head" style="gap:14px">
+    <h2>Alle SKU&#39;s &mdash; de onderbouwing</h2>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-left:auto">
+      <div class="chips" id="chips">
+        <button class="chip" data-f="alles">alles</button>
+        <button class="chip" data-f="telaat">te laat besteld</button>
+        <button class="chip" data-f="nu">nu bestellen</button>
+        <button class="chip" data-f="leeg">nu uit voorraad</button>
+        <button class="chip" data-f="geenaanbod">geen leveranciersprijs</button>
+      </div>
+      <input type="search" id="q" placeholder="zoek SKU of leverancier">
+    </div>
+  </div>
+  <div class="tblwrap"><table id="tbl"></table></div>
+  <div class="panel-body" style="border-top:1px solid var(--line-soft);font-size:12px;color:var(--ink-3)" id="tblfoot"></div>
+</section>
+
+<!-- 7. CONTAINERS -->
+<section class="panel">
+  <div class="panel-head">
+    <h2>Wat lost elke container op</h2>
+    <div class="hint">backorders per order gerekend: een order telt pas mee als élke regel gedekt is</div>
+  </div>
+  <div class="cgrid" id="containers"></div>
+</section>
+
+<!-- 8. SPEC -->
+<section class="panel">
+  <div class="panel-head"><h2>Voor Zander — hoe dit live gebouwd wordt</h2></div>
+  <div class="panel-body spec" id="spec"></div>
+</section>
+
+<footer id="foot"></footer>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+
+/* ---- door orders-vrij.ps1 berekend op de peildatum; live opnieuw te berekenen (zie spec) ---- */
+const VRIJVAL = {
+  totaalOrders: 836, totaalStuks: 2207,
+  fases: [
+    {eta:null,         orders:1,   stuks:1,    label:"nu, met voorraad die er ligt"},
+    {eta:"2026-09-17", orders:652, stuks:1539, label:null},
+    {eta:"2026-10-09", orders:113, stuks:375,  label:null},
+    {eta:"2026-11-06", orders:25,  stuks:89,   label:null}
+  ],
+  blijftOpen: 45,
+  blokkers: [["TextielSpray",21],["Velvet - High Backrest Chair Cover - Brown",7],
+             ["Velvet - Brown - Chair - NEW",6],["Jacquard - Dining Chair Cover Big Size - Navy",5],
+             ["Velvet - Robe design one seat - brown",2]]
+};
+
+const DAG = 86400000, HOR = 210, WEKEN = 26;
+const peil = new Date(D.peildatum + "T00:00:00");
+const nf = new Intl.NumberFormat("nl-NL");
+const n0 = x => nf.format(Math.round(x));
+const n1 = x => nf.format(Math.round(x*10)/10);
+
+function asList(x){
+  if (Array.isArray(x)) return x;
+  if (x && typeof x === "object" && Array.isArray(x.value)) return x.value;
+  if (x && typeof x === "object" && x.eta) return [x];
+  return [];
+}
+const dAt  = i => new Date(peil.getTime() + i*DAG);
+const dIdx = s => Math.round((new Date(s + "T00:00:00") - peil)/DAG);
+const fD   = d => d.toLocaleDateString("nl-NL",{day:"numeric",month:"short"});
+const fDL  = d => d.toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"});
+
+const state = {lead:90, dek:90, win:28, q:"", f:"alles", sort:"schade", dir:-1, sel:null, wk:null,
+               theme:"auto", smode:"schade", osort:"fam"};
+
+/* ---------------- kern: projectie per SKU ---------------- */
+function bereken(r){
+  const perDag = state.win===7 ? r.q7/7 : state.win===28 ? r.q28/28 : r.q90/90;
+  const arr = {};
+  asList(r.inb).forEach(i=>{
+    if(!i || !i.eta) return;
+    let d = dIdx(i.eta); if(d<0) d=0; if(d>HOR) return;
+    arr[d] = (arr[d]||0) + (+i.qty||0);
+  });
+  const tekortNu = Math.max(0, r.bo - r.voorraad);
+  let s = Math.max(0, r.voorraad - r.bo);
+  const serie = [s], gaten = [];
+  let open = (s<=0 && perDag>0) ? {van:0} : null;
+
+  for(let d=1; d<=HOR; d++){
+    if(arr[d]) s += arr[d];
+    s -= perDag;
+    if(s<=0){ s=0; if(!open && perDag>0) open={van:d}; }
+    else if(open){ open.tot = d-1; gaten.push(open); open = null; }
+    serie.push(s);
+  }
+  if(open){ open.tot = HOR; open.eindeloos = true; gaten.push(open); }
+
+  const eerste = gaten.length ? gaten[0].van : null;
+  const terug  = (gaten.length && !gaten[0].eindeloos) ? gaten[0].tot+1 : null;
+  const weer   = gaten.length>1 ? gaten[1].van : null;
+  const besteldag = eerste===null ? null : eerste - state.lead;
+
+  const bijLead = Math.floor(serie[Math.min(state.lead, HOR)]);
+  const tekort  = Math.max(0, Math.ceil(perDag*state.dek) - bijLead);
+  const dozen   = (r.doos>0) ? Math.ceil(tekort/r.doos) : 0;
+
+  // schade: stuks vraag die in de komende 90 dagen op een lege plank valt
+  let drogeDagen = 0;
+  gaten.forEach(g=>{ drogeDagen += Math.max(0, Math.min(g.tot,89) - g.van + 1); });
+  const schade = Math.round(perDag * drogeDagen);
+
+  return {...r, perDag, arr, serie, gaten, eerste, terug, weer, besteldag,
+          bijLead, tekort, dozen, tekortNu, schade, drogeDagen,
+          onderweg: asList(r.inb).reduce((a,i)=>a+(+i.qty||0),0),
+          heeftAanbod: r.doos>0 && r.prijs>0};
+}
+let RIJEN = [];
+function herbereken(){ RIJEN = D.inkoop.map(bereken); }
+
+/* ---------------- laag 1 ---------------- */
+function drawVerdict(){
+  const actie = RIJEN.filter(r => r.tekort>0);
+  const telaat = actie.filter(r => r.besteldag!==null && r.besteldag<0);
+  // dozen kunnen alleen berekend worden waar de doosinhoud bekend is; de rest telt
+  // wel mee in de stuks maar niet in het doosaantal — die twee dus apart houden
+  const metDoos  = actie.filter(r=>r.heeftAanbod);
+  const zonder   = actie.filter(r=>!r.heeftAanbod);
+  const dozen      = metDoos.reduce((a,r)=>a+r.dozen,0);
+  const stuksMet   = metDoos.reduce((a,r)=>a+r.tekort,0);
+  const stuksZonder= zonder.reduce((a,r)=>a+r.tekort,0);
+  const stuks      = stuksMet + stuksZonder;
+  const gemVul = D.po.filter(p=>p.detail).reduce((a,p)=>a+p.stuks,0) / D.po.filter(p=>p.detail).length;
+  const cont = stuks/gemVul;
+
+  const dead = telaat.map(r=>r.besteldag).sort((a,b)=>a-b);
+  const opTijd = actie.filter(r=>r.besteldag!==null && r.besteldag>=0).map(r=>r.besteldag).sort((a,b)=>a-b);
+  const volgende = opTijd.length ? opTijd[0] : null;
+
+  document.getElementById("verdict").innerHTML = `
+    <div>
+      <div class="lede">Er moet <em>${n0(dozen)} dozen</em> besteld worden om over ${state.dek} dagen
+        nog steeds te kunnen leveren.</div>
+      <div class="note">Dat zijn ${n0(stuksMet)} stuks over ${n0(metDoos.length)} SKU&#39;s waarvan de
+        doosinhoud bekend is. Daar komt <b>${n0(stuksZonder)} stuks over ${zonder.length} SKU&#39;s</b>
+        bovenop die geen doosinhoud in StockItUp hebben &mdash; die zitten niet in het doosaantal.
+        Samen ${n0(stuks)} stuks, ongeveer <b>${n1(cont)} container${cont>=2?"s":""}</b> als je vult
+        zoals je laatste drie (gemiddeld ${n0(gemVul)} stuks).</div>
+    </div>
+    <div class="vnum crit">
+      <span class="k">te laat</span>
+      <span class="v">${n0(telaat.length)}</span>
+      <span class="n">SKU&#39;s hadden al besteld moeten zijn${dead.length?`, langst ${n0(-dead[0])} dgn`:""}</span>
+    </div>
+    <div class="vnum">
+      <span class="k">eerstvolgende deadline</span>
+      <span class="v">${volgende===null ? "&mdash;" : fD(dAt(volgende))}</span>
+      <span class="n">${volgende===null ? "geen" : volgende===0 ? "vandaag" : "over "+n0(volgende)+" dagen"}</span>
+    </div>
+    <div class="vnum crit">
+      <span class="k">niet te bestellen</span>
+      <span class="v">${n0(stuksZonder)}</span>
+      <span class="n">stuks zonder doosinhoud &mdash; filter &ldquo;geen leveranciersprijs&rdquo;</span>
+    </div>`;
+}
+
+/* ---------------- de bestelling ---------------- */
+// model = de naam zonder de kleur (het laatste deel), zodat alle kleuren van
+// "Velvet - Robe design two seat" onder één kop staan. Zo controleer je een containerbestelling:
+// per model zien welke kleuren erin zitten en hoeveel.
+function familie(s){
+  const d = (s||"").split(/\s+-\s+/).map(x=>x.trim()).filter(Boolean);
+  if(d.length >= 3) return d.slice(0,-1).join(" - ");
+  if(d.length === 2) return d[0];
+  return d[0] || "overig";
+}
+
+function drawOrder(){
+  const rs = RIJEN.filter(r=>r.dozen>0);
+  const niet = RIJEN.filter(r=>r.tekort>0 && !r.heeftAanbod).sort((a,b)=>b.tekort-a.tekort);
+  const totDozen  = rs.reduce((a,r)=>a+r.dozen,0);
+  const totStuks  = rs.reduce((a,r)=>a+r.dozen*r.doos,0);   // wat je ontvangt, hele dozen
+  const totTekort = rs.reduce((a,r)=>a+r.tekort,0);          // wat je strikt genomen tekortkomt
+
+  document.querySelectorAll("#osort button").forEach(b=>
+    b.setAttribute("aria-pressed", b.dataset.s===state.osort));
+
+  const regel = r => `<tr>
+    <td class="oname">${r.sku||"(product "+r.pid+")"}</td>
+    <td class="odoos mono"><b>${n0(r.dozen)}</b></td>
+    <td class="mono muted">${n0(r.doos)}</td>
+    <td class="mono">${n0(r.dozen*r.doos)}</td>
+    <td class="mono owhy">${r.eerste===null?'<span class="muted">op tijd</span>'
+      : r.eerste===0?'<span class="pill crit">nu leeg</span>'
+      : `<span class="pill ${r.eerste<=30?"crit":r.eerste<=60?"warn":"flat"}">${fD(dAt(r.eerste))}</span>`}</td></tr>`;
+
+  let body = "";
+  if(state.osort==="fam"){
+    const groepen = {};
+    rs.forEach(r=>{ (groepen[familie(r.sku)] = groepen[familie(r.sku)] || []).push(r); });
+    Object.keys(groepen)
+      .sort((a,b)=> groepen[b].reduce((x,r)=>x+r.dozen,0) - groepen[a].reduce((x,r)=>x+r.dozen,0))
+      .forEach(f=>{
+        const g = groepen[f].sort((a,b)=>(a.sku||"").localeCompare(b.sku||""));
+        const gd = g.reduce((a,r)=>a+r.dozen,0), gs = g.reduce((a,r)=>a+r.dozen*r.doos,0);
+        body += `<tr class="ogroep"><td>${f}</td><td class="mono">${n0(gd)}</td><td></td>
+                 <td class="mono">${n0(gs)}</td><td class="mono muted">${g.length} artikelen</td></tr>`;
+        body += g.map(regel).join("");
+      });
+  } else {
+    const s = state.osort==="dozen" ? (a,b)=>b.dozen-a.dozen
+            : (a,b)=>(a.eerste===null?1e9:a.eerste)-(b.eerste===null?1e9:b.eerste) || b.dozen-a.dozen;
+    body = rs.slice().sort(s).map(regel).join("");
+  }
+
+  document.getElementById("ordersheet").innerHTML = `
+    <div class="osum">
+      <div><span class="k">totaal te bestellen</span><span class="v">${n0(totDozen)}</span><span class="n">dozen</span></div>
+      <div><span class="k">dat is</span><span class="v">${n0(totStuks)}</span><span class="n">stuks</span></div>
+      <div><span class="k">kaal tekort</span><span class="v2">${n0(totTekort)} stuks</span>
+        <span class="n">de rest is afronding op hele dozen</span></div>
+      <div><span class="k">over</span><span class="v">${n0(rs.length)}</span><span class="n">artikelen</span></div>
+      <div><span class="k">leverancier</span><span class="v2">${[...new Set(rs.map(r=>r.lev||"onbekend"))].join(", ")}</span></div>
+    </div>
+    <div class="tblwrap"><table class="otbl">
+      <thead><tr><th>Artikel</th><th>Dozen</th><th>per doos</th><th>stuks</th><th>loopt leeg</th></tr></thead>
+      <tbody>${body}</tbody>
+      <tfoot><tr><td>Totaal</td><td class="mono">${n0(totDozen)}</td><td></td>
+        <td class="mono">${n0(totStuks)}</td><td></td></tr></tfoot>
+    </table></div>`;
+
+  document.getElementById("oniet").innerHTML = niet.length ? `
+    <div class="onietblok">
+      <b>Hier kan geen doosaantal van gemaakt worden</b> &mdash; ${niet.length} artikelen,
+      samen ${n0(niet.reduce((a,r)=>a+r.tekort,0))} stuks. Er staat geen doosinhoud in StockItUp.
+      <div class="onietlijst">${niet.map(r=>
+        `<span><b class="num">${n0(r.tekort)}</b> ${r.sku||"(product "+r.pid+")"}</span>`).join("")}</div>
+    </div>` : "";
+}
+
+function orderTekst(){
+  const rs = RIJEN.filter(r=>r.dozen>0).sort((a,b)=>(a.sku||"").localeCompare(b.sku||""));
+  return "Artikel\tDozen\tPer doos\tStuks\tLoopt leeg op\n" + rs.map(r=>
+    [r.sku||("product "+r.pid), r.dozen, r.doos, r.dozen*r.doos,
+     r.eerste===null?"op tijd":r.eerste===0?"nu leeg":dAt(r.eerste).toLocaleDateString("nl-NL")
+    ].join("\t")).join("\n");
+}
+
+/* ---------------- kpi ---------------- */
+function drawKpis(){
+  const metVraag = RIJEN.filter(r=>r.perDag>0);
+  const nuLeeg = metVraag.filter(r=>r.eerste===0);
+  const in30   = metVraag.filter(r=>r.eerste!==null && r.eerste>0 && r.eerste<=30);
+  const nooit  = metVraag.filter(r=>r.eerste===null);
+  const tweede = metVraag.filter(r=>r.weer!==null);
+  const boStuks = RIJEN.reduce((a,r)=>a+r.bo,0);
+
+  document.getElementById("kpis").innerHTML = [
+    ["uit voorraad nu", nuLeeg.length, `van ${n0(metVraag.length)} SKU's met vraag`, "is-crit"],
+    ["leeg binnen 30 dagen", in30.length, "komen er nog bij", "is-warn"],
+    ["backorder", n0(boStuks), `stuks op componentniveau &middot; ${VRIJVAL.totaalOrders} klantorders`, "is-crit"],
+    ["loopt 2× leeg", tweede.length, `ook ná de eerstvolgende levering, binnen ${HOR} dgn`, "is-warn"],
+    ["blijft gedekt", nooit.length, `komt ${HOR} dagen niet droog`, "is-ok"]
+  ].map(([k,v,n,c])=>`<div class="kpi ${c}"><span class="k">${k}</span><span class="v">${v}</span><span class="n">${n}</span></div>`).join("");
+}
+
+/* ---------------- weekbalk ---------------- */
+function weekData(){
+  const metVraag = RIJEN.filter(r=>r.perDag>0);
+  const wks = [];
+  for(let w=0; w<WEKEN; w++){
+    const a = w*7, b = a+6;
+    let c = 0;
+    metVraag.forEach(r=>{ if(r.gaten.some(g=>g.van<=b && g.tot>=a)) c++; });
+    wks.push({w, a, b, c});
+  }
+  return wks;
+}
+function drawWeeks(){
+  const wks = weekData(), max = Math.max(1, ...wks.map(x=>x.c));
+  document.getElementById("weeks").innerHTML = wks.map(x=>`
+    <div class="wk" data-w="${x.w}" data-sel="${state.wk===x.w}" title="week van ${fD(dAt(x.a))}: ${x.c} SKU's droog">
+      <span class="cap">${x.c}</span>
+      <div class="bar" style="height:${Math.max(2, x.c/max*100)}%"></div>
+    </div>`).join("");
+
+  const pos = {};
+  D.po.forEach(p=>{ const w = Math.floor(dIdx(p.eta)/7); if(w>=0 && w<WEKEN) (pos[w]=pos[w]||[]).push(p); });
+  document.getElementById("wkarr").innerHTML = wks.map(x=>
+    `<div title="${(pos[x.w]||[]).map(p=>p.naam+" ("+n0(p.stuks)+" stuks)").join(", ")}">${pos[x.w]?'<span class="pin"></span>':''}</div>`).join("");
+  document.getElementById("wkaxis").innerHTML = wks.map(x=>
+    `<div>${x.w%4===0 ? dAt(x.a).toLocaleDateString("nl-NL",{month:"short"}) : ""}</div>`).join("");
+
+  document.querySelectorAll(".wk").forEach(el=>el.onclick=()=>{
+    const w = +el.dataset.w;
+    state.wk = state.wk===w ? null : w;
+    drawWeeks(); drawTable();
+  });
+}
+
+/* ---------------- horizonstrip ---------------- */
+const STRIPMODE = {
+  schade:  {lab:"meeste gemiste verkoop", hint:"gerangschikt op stuks vraag die op een lege plank valt",
+            f:r=>r.schade>0, s:(a,b)=>b.schade-a.schade},
+  eerst:   {lab:"valt het eerst droog", hint:"gerangschikt op de dag dat de voorraad op is",
+            f:r=>r.eerste!==null, s:(a,b)=>a.eerste-b.eerste || b.perDag-a.perDag},
+  tweede:  {lab:"loopt ná de levering wéér leeg", hint:"SKU's met een tweede gat: één container is niet genoeg",
+            f:r=>r.weer!==null, s:(a,b)=>a.weer-b.weer || b.perDag-a.perDag},
+  gedekt:  {lab:"komt er net doorheen", hint:"loopt binnen de horizon niet droog — hier hoef je niets te doen",
+            f:r=>r.eerste===null, s:(a,b)=>b.perDag-a.perDag}
+};
+function stripRijen(){
+  const m = STRIPMODE[state.smode];
+  return RIJEN.filter(r=>r.perDag>0 && m.f(r)).sort(m.s).slice(0,35);
+}
+function drawStrip(){
+  const m = STRIPMODE[state.smode], rs = stripRijen();
+  const totaal = RIJEN.filter(r=>r.perDag>0 && m.f(r)).length;
+  document.getElementById("striphint").textContent =
+    `${m.hint} — ${rs.length} van ${n0(totaal)} getoond`;
+
+  document.querySelectorAll("#smode button").forEach(b=>
+    b.setAttribute("aria-pressed", b.dataset.m===state.smode));
+
+  const scale = [];
+  for(let d=0; d<=HOR; d+=30) scale.push(`<span style="left:${d/HOR*100}%">${fD(dAt(d))}</span>`);
+  document.getElementById("scale").innerHTML =
+    `<div style="position:absolute;left:var(--labw);right:118px;top:0;bottom:0">${scale.join("")}</div>`;
+
+  if(!rs.length){ document.getElementById("rows").innerHTML =
+    `<div class="empty">Geen SKU's in deze categorie.</div>`; return; }
+
+  document.getElementById("rows").innerHTML = rs.map(r=>{
+    const gaps = r.gaten.map(g=>
+      `<div class="gap" style="left:${g.van/HOR*100}%;width:${Math.max(.4,(g.tot-g.van+1)/HOR*100)}%"
+         title="droog van ${fDL(dAt(g.van))} tot ${g.eindeloos?"voorbij de horizon":fDL(dAt(g.tot))}"></div>`).join("");
+    const pins = Object.keys(r.arr).map(d=>
+      `<div class="sarr" style="left:${d/HOR*100}%" title="+${n0(r.arr[d])} stuks op ${fDL(dAt(+d))}"></div>`).join("");
+    const datum = r.eerste===null ? `<b style="color:var(--ok)">gedekt</b>`
+                : r.eerste===0    ? `<b>nu leeg</b>`
+                : `<b>${fD(dAt(r.eerste))}</b>`;
+    return `<div class="srow" data-pid="${r.pid}" data-sel="${state.sel===r.pid}">
+      <div class="slab" title="${r.sku}">${r.sku||"(zonder naam, product "+r.pid+")"}</div>
+      <div class="swk">${n1(r.perDag*7)}<span class="muted">/wk</span></div>
+      <div class="strack">${gaps}${pins}</div>
+      <div class="sdate">${datum}</div>
+    </div>`;
+  }).join("");
+
+  document.querySelectorAll(".srow").forEach(el=>el.onclick=()=>select(+el.dataset.pid));
+}
+
+/* ---------------- detail ---------------- */
+function drawDetail(){
+  const box = document.getElementById("detail");
+  if(state.sel===null){ box.innerHTML = `<div class="empty">Kies een SKU om de voorraadlijn te zien.</div>`;
+    document.getElementById("dtitle").textContent = "Detail"; return; }
+  const r = RIJEN.find(x=>x.pid===state.sel);
+  if(!r){ state.sel=null; return drawDetail(); }
+  document.getElementById("dtitle").textContent = r.sku || ("product "+r.pid);
+
+  const W=760, H=240, P={t:18,r:14,b:26,l:46};
+  const dekLijn = Math.ceil(r.perDag*state.dek);
+  // schaal altijd zo dat de gewenste dekking in beeld staat: dan zie je meteen
+  // hoe ver je ervanaf zit, ook als de voorraad bijna nul is
+  const max = Math.max(10, dekLijn*1.1, ...r.serie);
+  const X = i => P.l + i/HOR*(W-P.l-P.r);
+  const Y = v => P.t + (1 - v/max)*(H-P.t-P.b);
+
+  let path = `M ${X(0)} ${Y(r.serie[0])}`;
+  for(let i=1;i<=HOR;i++) path += ` L ${X(i)} ${Y(r.serie[i])}`;
+  const area = path + ` L ${X(HOR)} ${Y(0)} L ${X(0)} ${Y(0)} Z`;
+
+  const gapRects = r.gaten.map(g=>
+    `<rect x="${X(g.van)}" y="${P.t}" width="${Math.max(1,X(g.tot+1)-X(g.van))}" height="${H-P.t-P.b}"
+       fill="var(--crit-soft)"/>`).join("");
+  const pins = Object.keys(r.arr).map(d=>
+    `<line x1="${X(+d)}" y1="${P.t}" x2="${X(+d)}" y2="${H-P.b}" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3"/>
+     <polygon points="${X(+d)-4},${P.t-5} ${X(+d)+4},${P.t-5} ${X(+d)},${P.t+2}" fill="var(--accent)"/>`).join("");
+  let ticks="";
+  for(let d=0; d<=HOR; d+=30) ticks +=
+    `<text x="${X(d)}" y="${H-6}" font-size="10" fill="var(--ink-3)" text-anchor="middle"
+      font-family="IBM Plex Mono,monospace">${fD(dAt(d))}</text>`;
+  const leeg = r.gaten.length===1 && r.gaten[0].van<=1 && r.gaten[0].eindeloos
+    ? `<text x="${(P.l+W-P.r)/2}" y="${(H-P.b+P.t)/2}" font-size="13" fill="var(--crit)" text-anchor="middle"
+        font-family="Archivo,sans-serif" font-weight="700">de hele horizon droog — er staat niets onderweg</text>` : "";
+
+  const inbLijst = asList(r.inb).sort((a,b)=>a.eta<b.eta?-1:1).map(i=>
+    `<div><span>${i.order||"inkooporder"}</span><span>+${n0(i.qty)} &nbsp;${fD(new Date(i.eta+"T00:00:00"))}</span></div>`).join("")
+    || `<div><span class="muted">niets onderweg</span><span>&mdash;</span></div>`;
+
+  box.innerHTML = `<div class="detail">
+    <div>
+      <svg class="dchart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" role="img"
+           aria-label="voorraadverloop">
+        ${gapRects}
+        <line x1="${P.l}" y1="${Y(0)}" x2="${W-P.r}" y2="${Y(0)}" stroke="var(--line)"/>
+        ${dekLijn<max?`<line x1="${P.l}" y1="${Y(dekLijn)}" x2="${W-P.r}" y2="${Y(dekLijn)}"
+           stroke="var(--warn-bar)" stroke-width="1" stroke-dasharray="5 4"/>
+          <text x="${W-P.r}" y="${Y(dekLijn)-5}" font-size="10" fill="var(--warn)" text-anchor="end"
+            font-family="IBM Plex Mono,monospace">dekking ${state.dek} dgn = ${n0(dekLijn)}</text>`:""}
+        <path d="${area}" fill="var(--ok-soft)"/>
+        <path d="${path}" fill="none" stroke="var(--ok-bar)" stroke-width="2"/>
+        ${pins}${leeg}
+        <text x="${P.l-8}" y="${Y(max)+4}" font-size="10" fill="var(--ink-3)" text-anchor="end"
+          font-family="IBM Plex Mono,monospace">${n0(max)}</text>
+        <text x="${P.l-8}" y="${Y(0)+4}" font-size="10" fill="var(--ink-3)" text-anchor="end"
+          font-family="IBM Plex Mono,monospace">0</text>
+        ${ticks}
+      </svg>
+      <div style="font-size:12px;color:var(--ink-3);margin-top:4px">
+        Rode vlakken = dagen zonder voorraad. Stippellijn = aankomst van een inkooporder.
+      </div>
+    </div>
+    <div class="dfacts">
+      <div><span>verkoop</span><span>${n1(r.perDag*7)} / week</span></div>
+      <div><span>gemiste verkoop, 90 dgn</span><span style="color:${r.schade?"var(--crit)":"inherit"}">
+        ${r.schade? n0(r.schade)+" stuks ("+r.drogeDagen+" dgn droog)" : "geen"}</span></div>
+      <div><span>vrije voorraad</span><span>${n0(r.voorraad)}</span></div>
+      <div><span>backorder</span><span>${r.bo? n0(r.bo) : "&mdash;"}</span></div>
+      <div><span>loopt leeg op</span><span style="color:var(--crit)">${r.eerste===null?"niet binnen "+HOR+" dgn":r.eerste===0?"nu al":fDL(dAt(r.eerste))}</span></div>
+      <div><span>weer op voorraad</span><span>${r.terug===null?"&mdash;":fDL(dAt(r.terug))}</span></div>
+      <div><span>dán weer leeg op</span><span style="color:var(--crit)">${r.weer===null?"&mdash;":fDL(dAt(r.weer))}</span></div>
+      <div><span>uiterlijk bestellen</span><span style="color:${r.besteldag!==null&&r.besteldag<0?"var(--crit)":"var(--ink)"}">
+        ${r.besteldag===null?"&mdash;":r.besteldag<0?n0(-r.besteldag)+" dgn te laat":fDL(dAt(r.besteldag))}</span></div>
+      <div><span>nu bestellen</span><span>${r.heeftAanbod? n0(r.dozen)+" dozen ("+n0(r.doos)+"/doos)" : "geen doosinfo"}</span></div>
+      <div style="border:0;margin-top:10px"><span style="font-weight:600">onderweg</span><span></span></div>
+      ${inbLijst}
+    </div>
+  </div>`;
+}
+function select(pid){ state.sel = state.sel===pid ? null : pid; drawStrip(); drawTable(); drawDetail(); }
+
+/* ---------------- tabel ---------------- */
+const KOL = [
+  ["sku","SKU",r=>r.sku||"(product "+r.pid+")",false],
+  ["schade","gemist 90d",r=>r.schade?`<b>${n0(r.schade)}</b>`:"&middot;",true],
+  ["perDag","p/week",r=>n1(r.perDag*7),true],
+  ["voorraad","vrij",r=>n0(r.voorraad),true],
+  ["bo","BO",r=>r.bo?n0(r.bo):"&middot;",true],
+  ["onderweg","onderweg",r=>r.onderweg?n0(r.onderweg):"&middot;",true],
+  ["eerste","leeg op",r=>r.eerste===null?'<span class="pill ok">gedekt</span>':
+      r.eerste===0?'<span class="pill crit">nu</span>':
+      `<span class="pill ${r.eerste<=30?"crit":r.eerste<=60?"warn":"flat"}">${fD(dAt(r.eerste))}</span>`,true],
+  ["terug","terug op",r=>r.terug===null?"&middot;":fD(dAt(r.terug)),true],
+  ["weer","weer leeg",r=>r.weer===null?"&middot;":`<span class="pill warn">${fD(dAt(r.weer))}</span>`,true],
+  ["besteldag","uiterlijk bestellen",r=>r.besteldag===null?"&middot;":
+      r.besteldag<0?`<span class="pill crit">${n0(-r.besteldag)} dgn te laat</span>`:
+      `<span class="pill ${r.besteldag<=14?"warn":"flat"}">${fD(dAt(r.besteldag))}</span>`,true],
+  ["tekort","tekort",r=>r.tekort?n0(r.tekort):"&middot;",true],
+  ["dozen","dozen",r=>r.heeftAanbod?(r.dozen?`<b>${n0(r.dozen)}</b>`:"&middot;"):'<span class="pill warn">?</span>',true],
+  ["lev","leverancier",r=>r.lev||"&middot;",false]
+];
+function gefilterd(){
+  let rs = RIJEN.slice();
+  if(state.f==="telaat")     rs = rs.filter(r=>r.besteldag!==null && r.besteldag<0);
+  if(state.f==="nu")         rs = rs.filter(r=>r.tekort>0);
+  if(state.f==="leeg")       rs = rs.filter(r=>r.eerste===0 && r.perDag>0);
+  if(state.f==="geenaanbod") rs = rs.filter(r=>r.tekort>0 && !r.heeftAanbod);
+  if(state.wk!==null){
+    const a=state.wk*7, b=a+6;
+    rs = rs.filter(r=>r.gaten.some(g=>g.van<=b && g.tot>=a));
+  }
+  if(state.q){
+    const q = state.q.toLowerCase();
+    rs = rs.filter(r=>(r.sku||"").toLowerCase().includes(q) || (r.lev||"").toLowerCase().includes(q));
+  }
+  const k = state.sort;
+  rs.sort((a,b)=>{
+    let x=a[k], y=b[k];
+    if(x===null) x = 1e9; if(y===null) y = 1e9;
+    if(typeof x==="string") return state.dir*x.localeCompare(y);
+    return state.dir*(x-y) || b.schade-a.schade;   // gelijke datums: grootste schade eerst
+  });
+  return rs;
+}
+function drawTable(){
+  const rs = gefilterd(), toon = rs.slice(0,150);
+  document.getElementById("tbl").innerHTML =
+    `<thead><tr>${KOL.map(([k,l])=>
+      `<th data-k="${k}" class="${state.sort===k?"sorted":""}">${l}${state.sort===k?(state.dir>0?" ↑":" ↓"):""}</th>`).join("")}</tr></thead>
+     <tbody>${toon.map(r=>`<tr data-pid="${r.pid}" data-sel="${state.sel===r.pid}">${
+       KOL.map(([k,l,f,mono])=>`<td class="${mono?"mono":""}">${f(r)}</td>`).join("")}</tr>`).join("")}</tbody>`;
+
+  const dozen = rs.reduce((a,r)=>a+r.dozen,0);
+  const losseStuks = rs.filter(r=>!r.heeftAanbod).reduce((a,r)=>a+r.tekort,0);
+  document.getElementById("tblfoot").innerHTML =
+    `${n0(rs.length)} SKU&#39;s in beeld${toon.length<rs.length?`, eerste ${toon.length} getoond`:""} &middot;
+     samen ${n0(dozen)} dozen te bestellen${losseStuks?`, plus ${n0(losseStuks)} stuks zonder bekende doosinhoud`:""}${
+     state.wk!==null?` &middot; gefilterd op week van ${fDL(dAt(state.wk*7))} (klik de week nogmaals om los te laten)`:""}`;
+
+  document.querySelectorAll("#tbl th").forEach(th=>th.onclick=()=>{
+    const k = th.dataset.k;
+    if(state.sort===k) state.dir*=-1; else {state.sort=k; state.dir=1;}
+    drawTable();
+  });
+  document.querySelectorAll("#tbl tbody tr").forEach(tr=>tr.onclick=()=>select(+tr.dataset.pid));
+}
+
+/* ---------------- containers ---------------- */
+function drawContainers(){
+  let cum = 0;
+  const cards = VRIJVAL.fases.map((f,i)=>{
+    cum += f.orders;
+    const po = f.eta ? D.po.find(p=>p.eta===f.eta) : null;
+    const naam = po ? po.naam : "Voorraad die er nu ligt";
+    const skus = f.eta ? RIJEN.filter(r=>asList(r.inb).some(x=>x && x.eta===f.eta)).length : 0;
+    return `<div class="ccard">
+      <div><div class="cname">${naam}</div>
+        <div class="ceta">${f.eta ? fDL(new Date(f.eta+"T00:00:00")) : "vandaag"}</div></div>
+      <div class="cbig">${n0(f.orders)} <span style="font-size:14px;color:var(--ink-3)">klantorder${f.orders===1?"":"s"} vrij</span></div>
+      <div class="crow"><span>stuks daarin</span><b>${n0(f.stuks)}</b></div>
+      ${po?`<div class="crow"><span>lading</span><b>${n0(po.stuks)} stuks / ${n0(po.regels)} regels</b></div>
+      <div class="crow"><span>SKU&#39;s aangevuld</span><b>${n0(skus)}</b></div>`:""}
+      <div class="crow" style="border-top:1px solid var(--line-soft);padding-top:7px">
+        <span>backorder daarna nog open</span><b>${n0(VRIJVAL.totaalOrders-cum)} orders</b></div>
+    </div>`;
+  }).join("");
+
+  document.getElementById("containers").innerHTML = cards + `
+    <div class="ccard" style="background:var(--surface-2)">
+      <div><div class="cname" style="color:var(--crit)">Blijft daarna staan</div>
+        <div class="ceta">na alle drie de containers</div></div>
+      <div class="cbig" style="color:var(--crit)">${n0(VRIJVAL.blijftOpen)}
+        <span style="font-size:14px;color:var(--ink-3)">orders</span></div>
+      <div style="font-size:12.5px;color:var(--ink-2);line-height:1.6">
+        Geblokkeerd door:<br>${VRIJVAL.blokkers.map(([s,c])=>
+          `<b class="num">${c}&times;</b> ${s}`).join("<br>")}
+      </div>
+    </div>`;
+}
+
+/* ---------------- spec ---------------- */
+function drawSpec(){
+  document.getElementById("spec").innerHTML = `
+<h3>Waar de vier pijlers vandaan komen</h3>
+<table>
+<tr><th>Wat</th><th>Bron in StockItUp</th><th>Let op</th></tr>
+<tr><td>Vrije voorraad</td><td><code>getStockPosition</code> per product, locatie <b>O / P / E</b></td>
+    <td>Sets niet meetellen als eigen voorraad — anders tel je dubbel (scheelde hier 11.040 stuks)</td></tr>
+<tr><td>Backorder</td><td>orderregels met status <code>BACKORDER</code>, openstaand aantal</td>
+    <td>Per order én per regel bewaren; een order is pas verzendbaar als álle regels gedekt zijn</td></tr>
+<tr><td>Verkoop per dag</td><td>verzonden orderregels, venster 7 / 28 / 90 dagen</td>
+    <td>Retouren er eerst afhalen, dán pas sets uitsplitsen naar componenten</td></tr>
+<tr><td>Inkomend</td><td><code>getSupplierOrder</code> + regels, met <code>eta</code></td>
+    <td>Regels koppelen op EAN, niet op SKU-tekst; bij dubbele EAN wint het niet-set product</td></tr>
+</table>
+
+<h3>De rekenregel, dag voor dag</h3>
+<pre>saldo = max(0, vrije_voorraad − backorder)
+voor elke dag d in 0..210:
+    saldo += aankomsten[d]              // inkooporders op hun ETA
+    saldo −= verkoop_per_dag
+    als saldo &lt; 0: saldo = 0           // niet-geleverde vraag telt als gemiste omzet
+                    markeer dag d als "uit voorraad"
+
+leeg_op        = eerste dag met saldo 0
+terug_op       = eerste dag daarna met saldo &gt; 0
+weer_leeg_op   = begin van het tweede gat          &lt;-- dit is wat er nu ontbrak
+besteldatum    = leeg_op − levertijd
+tekort         = ceil(verkoop_per_dag × dekking) − saldo[levertijd]
+dozen          = ceil(tekort ÷ doosinhoud)</pre>
+
+<h3>De drie dingen die dit anders maken dan een voorraadlijst</h3>
+<ul>
+<li><b>Een besteldatum, geen bestelpunt.</b> Niet "onder de 50 stuks" maar "uiterlijk 3 november bestellen".
+    Een vast bestelpunt dat in januari klopt, klopt in november niet meer.</li>
+<li><b>Het tweede gat.</b> Eén levering dekt zelden het hele seizoen. Zolang je alleen de eerste leegloop ziet,
+    bestel je structureel te laat voor de ronde daarna.</li>
+<li><b>Orders in plaats van stuks.</b> 542 stuks backorder liggen op voorraad, maar in orders waar een
+    ándere regel ontbreekt. In stuks lijkt dat winst, in verzendbare orders is het er niet.</li>
+</ul>
+
+<h3>Wat er nog geregeld moet worden</h3>
+<div class="open"><b>1. Sets.</b> 150 setrelaties, tot meerdere niveaus diep. Vraag moet naar componentniveau
+  gerold worden en beschikbaarheid is het knelpuntcomponent. Dit is geen randgeval: het raakt de meeste toplopers.</div>
+<div class="open"><b>2. Ontbrekende leveranciersdata.</b> 19 SKU&#39;s die besteld moeten worden hebben geen prijs
+  of doosinhoud. Samen goed voor 2.432 stuks &mdash; die vallen buiten het doosaantal hierboven, want zonder
+  doosinhoud valt er geen doos te tellen. LuxeSteam (846) en LUXESTEAM - PRO (463) zijn de grootste;
+  TextielSpray is klein maar blokkeert 21 klantorders. Eén keer invullen lost dat op.</div>
+<div class="open"><b>3. Geen index op <code>stockitup_inventory</code> (5,7 mln regels).</b> Elke query over de
+  volledige tabel loopt in een timeout. Index op product_id + datum voordat dit live gaat.</div>
+<div class="open"><b>4. Seizoen.</b> Nu wordt met een vlak gemiddelde gerekend. Er staat twee jaar
+  orderhistorie klaar; een maandfactor per productgroep is een dag werk en verandert de besteldatums flink.</div>
+<div class="open"><b>5. Containervulling.</b> Het dashboard rekent nu terug naar containers op basis van het
+  gemiddelde van de laatste drie zendingen. Zolang volume per doos ontbreekt is dat een schatting, geen ladingplan.</div>
+
+<h3>Ververstempo</h3>
+<p>Voorraad en backorders dagelijks vóór het inkoopoverleg. Verkoopgemiddelden wekelijks — vaker maakt de
+  cijfers onrustig zonder dat de beslissing verandert. ETA&#39;s van inkooporders direct bij wijziging: een
+  container die twee weken opschuift verandert elke besteldatum in de tabel hierboven.</p>`;
+}
+
+/* ---------------- besturing ---------------- */
+function alles(){
+  herbereken();
+  if(state.sel===null || !RIJEN.some(r=>r.pid===state.sel)){
+    const top = stripRijen()[0];
+    state.sel = top ? top.pid : null;
+  }
+  drawVerdict(); drawOrder(); drawKpis(); drawWeeks(); drawStrip(); drawTable(); drawDetail(); drawContainers();
+}
+document.querySelectorAll("#smode button").forEach(b=>{
+  b.onclick = ()=>{ state.smode = b.dataset.m; drawStrip(); };
+});
+document.querySelectorAll("#osort button").forEach(b=>{
+  b.onclick = ()=>{ state.osort = b.dataset.s; drawOrder(); };
+});
+document.getElementById("ocopy").onclick = async (e)=>{
+  const t = orderTekst(), knop = e.currentTarget;
+  let gelukt = false;
+  try { await navigator.clipboard.writeText(t); gelukt = true; } catch(err){ gelukt = false; }
+  if(!gelukt){
+    // klembord geweigerd: toon de tekst voorgeselecteerd, dan kan Ctrl+C alsnog
+    const ta = document.createElement("textarea");
+    ta.value = t;
+    ta.style.cssText = "position:fixed;inset:10% 10% auto;width:80%;height:60%;z-index:99;font-family:monospace;font-size:12px";
+    document.body.appendChild(ta); ta.select();
+    try { gelukt = document.execCommand("copy"); } catch(err){}
+    if(gelukt) ta.remove();
+    else { knop.textContent = "selecteer en druk Ctrl+C"; ta.onblur = ()=>{ ta.remove(); knop.textContent = "kopieer naar Excel"; }; return; }
+  }
+  knop.textContent = "gekopieerd"; knop.dataset.ok = "true";
+  setTimeout(()=>{ knop.textContent = "kopieer naar Excel"; knop.dataset.ok = "false"; }, 2000);
+};
+
+document.getElementById("lead").value = state.lead;
+document.getElementById("dek").value  = state.dek;
+function labels(){
+  document.getElementById("leadv").textContent = state.lead + " dagen";
+  document.getElementById("dekv").textContent  = state.dek + " dagen verkoop";
+}
+document.getElementById("lead").oninput = e=>{ state.lead=+e.target.value; labels(); alles(); };
+document.getElementById("dek").oninput  = e=>{ state.dek =+e.target.value; labels(); alles(); };
+document.querySelectorAll("#win button").forEach(b=>{
+  b.setAttribute("aria-pressed", +b.dataset.w===state.win);
+  b.onclick = ()=>{ state.win=+b.dataset.w;
+    document.querySelectorAll("#win button").forEach(x=>x.setAttribute("aria-pressed", +x.dataset.w===state.win));
+    alles(); };
+});
+document.querySelectorAll("#theme button").forEach(b=>{
+  b.setAttribute("aria-pressed", b.dataset.t===state.theme);
+  b.onclick = ()=>{ state.theme=b.dataset.t;
+    if(state.theme==="auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", state.theme);
+    document.querySelectorAll("#theme button").forEach(x=>x.setAttribute("aria-pressed", x.dataset.t===state.theme));
+  };
+});
+document.querySelectorAll("#chips .chip").forEach(b=>{
+  b.setAttribute("aria-pressed", b.dataset.f===state.f);
+  b.onclick = ()=>{ state.f=b.dataset.f;
+    document.querySelectorAll("#chips .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.f===state.f));
+    drawTable(); };
+});
+document.getElementById("q").oninput = e=>{ state.q=e.target.value; drawTable(); };
+
+document.getElementById("stamp").innerHTML =
+  `peildatum <b>${fDL(peil)}</b><br>${n0(D.aantalSkus)} SKU&#39;s &middot; ${n0(D.totaalVoorraad)} stuks voorraad<br>
+   ${n0(D.inboundStuks)} stuks onderweg in ${D.po.length} orders`;
+document.getElementById("foot").innerHTML =
+  `Gebouwd op StockItUp-data, gegenereerd ${D.gegenereerd}. Vrije voorraad is exclusief sets
+   (${n0(D.setVoorraad)} stuks zitten als set geregistreerd en worden op componentniveau geteld).
+   Dode voorraad: ${n0(D.doodStuks)} stuks over ${n0(D.doodSkus)} SKU&#39;s zonder verkoop in 90 dagen.
+   De backorder-vrijval per container is per klantorder gerekend, niet per stuk.`;
+
+labels(); drawSpec(); alles();
+</script>
